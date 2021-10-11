@@ -109,7 +109,7 @@ public:
 		return v / v.length();
 	}
 
-public:
+private:
 	double e[3];
 };
 

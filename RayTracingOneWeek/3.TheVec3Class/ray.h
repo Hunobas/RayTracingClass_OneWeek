@@ -21,7 +21,7 @@ public:
 		return orig + t * dir;
 	}
 
-public:
+private:
 	point3 orig;
 	vec3 dir;
 };
