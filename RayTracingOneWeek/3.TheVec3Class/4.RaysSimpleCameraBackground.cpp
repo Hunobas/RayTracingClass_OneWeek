@@ -9,26 +9,38 @@
 
 #include <iostream>
 
-bool hit_sphere(const point3& center, double radius, const ray& r)
+double hit_sphere(const point3& center, double radius, const ray& r)
 {
 	vec3 oc = r.origin() - center;
-	auto a = dot(r.direction(), r.direction());
-	auto b = 2.0 * dot(oc, r.direction());
-	auto c = dot(oc, oc) - radius * radius;
+	auto a = r.direction().length_squared();
+	auto half_b = dot(oc, r.direction());
+	auto c = oc.length_squared() - radius * radius;
 
-	auto discriminant = b * b - 4 * a * c; // 근의 공식
-	return (discriminant > 0);
+	auto discriminant = half_b * half_b - a * c; // root fomula
+	
+	if (discriminant < 0)
+	{
+		return -1.0;
+	}
+	else
+	{
+		auto first_root = (-half_b - std::sqrt(discriminant)) / a;
+		auto second_root = (-half_b + std::sqrt(discriminant)) / a;
+		return first_root > 0 ? first_root : (second_root > 0 ? second_root : -1.0);
+	}
 }
 
 color ray_color(const ray& r)
 {
-	if (hit_sphere(point3(0, 0, -1), 0.5, r))
+	auto t = hit_sphere(point3(0.5, 0.25, -0.75), 0.3, r);
+	if (t > 0.0)
 	{
-		return color(0, 1, 1);
+		vec3 N = unit_vector(r.at(t) - point3(0.5, 0.25, -0.75));
+		return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
 	}
 
 	vec3 unit_direction = unit_vector(r.direction());
-	auto t = 0.5 * (unit_direction.y() + 1.0);
+	t = 0.5 * (unit_direction.y() + 1.0);
 
 	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
