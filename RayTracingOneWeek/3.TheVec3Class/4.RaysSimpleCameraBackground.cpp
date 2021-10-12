@@ -7,31 +7,19 @@
 
 #include <iostream>
 
-color ray_color(const ray& r)
+color ray_color(const ray& r, const hittable& world)
 {
-	sphere sphere1(point3(0, 0, -1), 0.5);
-	hit_record rec1;
+	hit_record rec;
 
-	sphere sphere2(point3(-0.5, -0.75, -2), 0.9);
-	hit_record rec2;
-
-	bool is_hittable1 = sphere1.hit(r, -1.0, 100.0, rec1);
-	bool is_hittable2 = sphere2.hit(r, -1.0, 100.0, rec2);
-
-	if (is_hittable1)
+	if (world.hit(r, 0, infinity, rec))
 	{
-		return 0.5 * color(rec1.normal.x() + 1, rec1.normal.y() + 1, rec1.normal.z() + 1);
-	}
-
-	if (is_hittable2)
-	{
-		return 0.5 * color(rec2.normal.x() + 1, rec2.normal.y() + 1, rec2.normal.z() + 1);
+		return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
 	}
 
 	vec3 unit_direction = unit_vector(r.direction());
-	rec1.t = 0.5 * (unit_direction.y() + 1.0);
+	auto t = 0.5 * (unit_direction.y() + 1.0);
 
-	return (1.0 - rec1.t) * color(1.0, 1.0, 1.0) + rec1.t * color(0.5, 0.7, 1.0);
+	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
 int main()
@@ -43,6 +31,12 @@ int main()
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
 
 	PPM ppm1(image_height, image_width);
+
+	// World
+
+	hittable_list world;
+	world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+	world.add(make_shared<sphere>(point3(0, -500.5, -1), 500));
 
 	// camera
 
@@ -67,7 +61,7 @@ int main()
 			auto u = double(i) / (image_width - 1);
 			auto v = double(j) / (image_height - 1);
 			ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			color pixel_color = ray_color(r);
+			color pixel_color = ray_color(r, world);
 			//write_color(std::cout, pixel_color);
 
 			ppm1.image[j][i].r = static_cast<int>(255.999 * pixel_color.x());
