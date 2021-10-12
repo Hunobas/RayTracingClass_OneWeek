@@ -1,48 +1,37 @@
-#define RAY_H
-#define VEC3_H
-#define COLOR_H
+#include "rtweekend.h"
 
+#include "hittable_list.h"
 #include "color.h"
-#include "ray.h"
-#include "vec3.h"
 #include "ppm.h"
+#include "sphere.h"
 
 #include <iostream>
 
-double hit_sphere(const point3& center, double radius, const ray& r)
-{
-	vec3 oc = r.origin() - center;
-	auto a = r.direction().length_squared();
-	auto half_b = dot(oc, r.direction());
-	auto c = oc.length_squared() - radius * radius;
-
-	auto discriminant = half_b * half_b - a * c; // root fomula
-	
-	if (discriminant < 0)
-	{
-		return -1.0;
-	}
-	else
-	{
-		auto first_root = (-half_b - std::sqrt(discriminant)) / a;
-		auto second_root = (-half_b + std::sqrt(discriminant)) / a;
-		return first_root > 0 ? first_root : (second_root > 0 ? second_root : -1.0);
-	}
-}
-
 color ray_color(const ray& r)
 {
-	auto t = hit_sphere(point3(0.5, 0.25, -0.75), 0.3, r);
-	if (t > 0.0)
+	sphere sphere1(point3(0, 0, -1), 0.5);
+	hit_record rec1;
+
+	sphere sphere2(point3(-0.5, -0.75, -2), 0.9);
+	hit_record rec2;
+
+	bool is_hittable1 = sphere1.hit(r, -1.0, 100.0, rec1);
+	bool is_hittable2 = sphere2.hit(r, -1.0, 100.0, rec2);
+
+	if (is_hittable1)
 	{
-		vec3 N = unit_vector(r.at(t) - point3(0.5, 0.25, -0.75));
-		return 0.5 * color(N.x() + 1, N.y() + 1, N.z() + 1);
+		return 0.5 * color(rec1.normal.x() + 1, rec1.normal.y() + 1, rec1.normal.z() + 1);
+	}
+
+	if (is_hittable2)
+	{
+		return 0.5 * color(rec2.normal.x() + 1, rec2.normal.y() + 1, rec2.normal.z() + 1);
 	}
 
 	vec3 unit_direction = unit_vector(r.direction());
-	t = 0.5 * (unit_direction.y() + 1.0);
+	rec1.t = 0.5 * (unit_direction.y() + 1.0);
 
-	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+	return (1.0 - rec1.t) * color(1.0, 1.0, 1.0) + rec1.t * color(0.5, 0.7, 1.0);
 }
 
 int main()

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifdef RAY_H
 #define RAY_H
+#ifdef RAY_H
 
 #include "vec3.h"
 

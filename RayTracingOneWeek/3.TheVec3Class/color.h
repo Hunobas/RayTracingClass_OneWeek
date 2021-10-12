@@ -1,7 +1,7 @@
 #pragma once
 
-#ifdef COLOR_H
 #define COLOR_H
+#ifdef COLOR_H
 
 #include "vec3.h"
 #include <iostream>
