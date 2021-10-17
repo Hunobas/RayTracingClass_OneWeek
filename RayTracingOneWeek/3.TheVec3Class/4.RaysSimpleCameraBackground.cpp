@@ -7,6 +7,10 @@
 #include "material.h"
 
 #include <iostream>
+#include <vector>
+#include <thread>
+#include <future>
+#include <chrono>
 
 color ray_color(const ray& r, const hittable& world, int depth)
 {
@@ -87,38 +91,32 @@ hittable_list random_scene()
 
 }
 
-void make_scene(const int& image_width, const int& image_height, const camera& cam, const hittable_list& world, const PPM& ppm1,
-				const int& samples_per_pixel, const int& max_depth)
+auto make_scene(const int& j, const int& i, const int& image_width, const int& image_height, const camera& cam, const hittable_list& world, const int& max_depth,
+				const unsigned s_start, const unsigned s_end)
 {
-	for (int j = image_height - 1; j >= 0; --j)
+	color pixel_color(0, 0, 0);
+
+	for (unsigned s = s_start; s < s_end; ++s)
 	{
-		std::cerr << "\rscanlines remaining: " << j << ' ' << std::flush;
-		for (int i = 0; i < image_width; ++i)
-		{
-			color pixel_color(0, 0, 0);
-
-			for (int s = 0; s <= samples_per_pixel; ++s)
-			{
-				auto u = double(i) / (image_width - 1);
-				auto v = double(j) / (image_height - 1);
-				ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, world, max_depth);
-			}
-
-			write_color(ppm1, j, i, pixel_color, samples_per_pixel);
-		}
+		auto u = double(i) / (image_width - 1);
+		auto v = double(j) / (image_height - 1);
+		ray r = cam.get_ray(u, v);
+		pixel_color += ray_color(r, world, max_depth);
 	}
 
+	return pixel_color;
 }
 
 int main()
 {
+	const auto sta = chrono::steady_clock::now();
+
 	// image
 
 	const auto aspect_ratio = 3.0 / 2.0;
-	const int image_width = 1200;
+	const int image_width = 400;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 500;
+	const int samples_per_pixel = 100;
 	const int max_depth = 50;
 
 	PPM ppm1(image_height, image_width);
@@ -136,6 +134,12 @@ int main()
 	auto aperture = 0.1;
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
+	// threads
+	const unsigned n_threads = 10;
+	std::vector<std::future<color>> futures;
+	futures.resize(n_threads);
+	const unsigned n_per_thread = samples_per_pixel / n_threads;
+
 	// render
 
 	for (int j = image_height - 1; j >= 0; --j)
@@ -145,13 +149,22 @@ int main()
 		{
 			color pixel_color(0, 0, 0);
 
-			for (int s = 0; s <= samples_per_pixel; ++s)
+			for (unsigned t = 0; t < n_threads; ++t)
+				futures[t] = std::async(make_scene, j, i, image_width, image_height, cam, world, max_depth,
+					t * n_per_thread, (t + 1) * n_per_thread);
+
+			for (unsigned t = 0; t < n_threads; ++t)
+				pixel_color += futures[t].get();
+
+			/*color pixel_color(0, 0, 0);
+
+			for (unsigned s = 0; s < samples_per_pixel; ++s)
 			{
 				auto u = double(i) / (image_width - 1);
 				auto v = double(j) / (image_height - 1);
 				ray r = cam.get_ray(u, v);
 				pixel_color += ray_color(r, world, max_depth);
-			}
+			}*/
 
 			write_color(ppm1, j, i, pixel_color, samples_per_pixel);
 		}
@@ -163,7 +176,10 @@ int main()
 	ppm1.gray_scale();
 	ppm1.save("Result_gray.ppm");
 
+	const chrono::duration<double> dur = chrono::steady_clock::now() - sta;
+
 	std::cerr << "\nDone.\n";
+	cout << "Run time : " << dur.count() << endl;
 
 	return 0;
 }

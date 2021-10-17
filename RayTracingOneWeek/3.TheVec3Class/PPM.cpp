@@ -100,14 +100,14 @@ void PPM::create_image()
 void PPM::horizontal_flip()
 {
 	for (int i = 0; i < height; i++)
-		for (int j = 0; j < height; j++)
+		for (int j = 0; j < width; j++)
 			std::swap(image[i][j], image[i][width - 1 - j]);
 }
 
 void PPM::vertical_flip()
 {
 	for (int i = 0; i < height; i++)
-		for (int j = 0; j < height; j++)
+		for (int j = 0; j < width; j++)
 			std::swap(image[i][j], image[height - 1 - i][j]);
 }
 
@@ -119,7 +119,7 @@ void PPM::gray_scale()
 	float grayscaleValue;
 
 	for (int i = 0; i < height; i++)
-		for (int j = 0; j < height; j++)
+		for (int j = 0; j < width; j++)
 		{
 			grayscaleValue = image[i][j].r * r + image[i][j].g * g + image[i][j].b * b;
 			image[i][j].r = grayscaleValue;
