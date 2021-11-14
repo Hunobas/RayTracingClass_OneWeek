@@ -1,2 +1,3 @@
 ﻿  RayTracingClass_OneWeek_release.cpp
+D:\Program Files\Git\RayTracingClass_OneWeek\RayTracingClass_OneWeek\RayTracingClass_OneWeek\RayTracingClass_OneWeek_release.cpp(56,32): warning C4018: '<': signed/unsigned mismatch
   RayTracingClass_OneWeek.vcxproj -> D:\Program Files\Git\RayTracingClass_OneWeek\RayTracingClass_OneWeek\Debug\RayTracingClass_OneWeek.exe

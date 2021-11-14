@@ -3,7 +3,6 @@
 #define RTWEEKEND_H
 #ifdef RTWEEKEND_H
 
-
 #include <cmath>
 #include <limits>
 #include <memory>

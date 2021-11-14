@@ -1,5 +1,20 @@
 #include "PPM.h"
 
+using namespace std;
+
+PPM::~PPM()
+{
+	delete_image();
+}
+
+PPM::PPM(int height, int width)
+{
+	set_height(height);
+	set_width(width);
+
+	create_image();
+}
+
 void PPM::save(string name_file)
 {
 	ofstream output(name_file, ios::binary);

@@ -11,13 +11,13 @@
 
 void write_color(const PPM& ppm, const int& j, const int& i, color pixel_color, int samples_per_pixel)
 {
-	auto r = pixel_color.x();
-	auto g = pixel_color.y();
-	auto b = pixel_color.z();
+	double r = pixel_color.x();
+	double g = pixel_color.y();
+	double b = pixel_color.z();
 
 	// Divide the color by the number of samples and gamma-correct for gamma = 2.0.
 
-	auto scale = 1.0 / samples_per_pixel;
+	double scale = 1.0 / samples_per_pixel;
 	r = std::sqrt(scale * r);
 	g = std::sqrt(scale * g);
 	b = std::sqrt(scale * b);

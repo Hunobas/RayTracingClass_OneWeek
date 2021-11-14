@@ -8,14 +8,19 @@
 class camera
 {
 public:
-	camera(point3 lookfrom, point3 lookat, vec3 vup,
-		double vfov, double aspect_ratio,
-		double aperture, double focus_disk)
+	camera(point3 lookfrom,
+		point3 lookat,
+		vec3 vup,
+		double vfov,
+		double aspect_ratio,
+		double aperture,
+		double focus_disk
+	)
 	{
-		auto theta = degrees_to_radians(vfov);
-		auto h = std::tan(theta / 2);
-		auto viewport_height = 2.0 * h;
-		auto viewport_width = aspect_ratio * viewport_height;
+		double theta = degrees_to_radians(vfov);
+		double h = std::tan(theta / 2);
+		double viewport_height = 2.0 * h;
+		double viewport_width = aspect_ratio * viewport_height;
 
 		w = unit_vector(lookfrom - lookat);
 		u = unit_vector(cross(vup, w));

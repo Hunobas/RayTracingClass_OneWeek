@@ -152,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PPM.cpp" />
-    <ClCompile Include="RayTracingClass_OneWeek.cpp" />
     <ClCompile Include="RayTracingClass_OneWeek_release.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
