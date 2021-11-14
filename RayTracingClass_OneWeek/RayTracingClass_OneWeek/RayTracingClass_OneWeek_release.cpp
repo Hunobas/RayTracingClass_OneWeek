@@ -12,6 +12,10 @@
 #include <future>
 #include <chrono>
 
+#define IMAGE_WIDTH 1200
+#define SAMPLES_PER_PIXEL 500
+#define N_THREADS 10
+
 color ray_color(const ray& r, const hittable& world, int depth);
 hittable_list random_scene();
 
@@ -21,9 +25,9 @@ int main()
 
 	// image
 	const double aspect_ratio = 3.0 / 2.0;
-	const int image_width = 1200;
+	const int image_width = IMAGE_WIDTH;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 500;
+	const int samples_per_pixel = SAMPLES_PER_PIXEL;
 	const int max_depth = 50;
 
 	PPM ppm1(image_height, image_width);
@@ -41,7 +45,7 @@ int main()
 	camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus);
 
 	// threads
-	const unsigned n_threads = 10;
+	const unsigned n_threads = N_THREADS;
 	std::vector<std::future<color>> futures;
 	futures.resize(n_threads);
 	const unsigned n_per_thread = samples_per_pixel / n_threads;
@@ -65,7 +69,6 @@ int main()
 	};
 
 	// render
-
 	for (int j = image_height - 1; j >= 0; --j)
 	{
 		std::cerr << "\rscanlines remaining: " << j << ' ' << std::flush;
