@@ -38,7 +38,7 @@ void PPM::save(string name_file)
 				}
 			}
 		}
-		else
+		else if (version == "P6")
 			for (int i = 0; i < height; i++)
 				for (int j = 0; j < width; j++)
 					output.write((char*)&image[i][j], sizeof(RGB));

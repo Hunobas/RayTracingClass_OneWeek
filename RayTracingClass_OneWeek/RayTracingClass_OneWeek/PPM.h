@@ -3,6 +3,8 @@
 #include <fstream>
 #include <cmath>
 
+#define PPM_VERSION "P6"
+
 class PPM
 {
 
@@ -37,7 +39,7 @@ public:
 private:
 	int width = 0;
 	int height = 0;
-	std::string version = "P6";
+	std::string version = PPM_VERSION;
 
 	void create_image();
 };
