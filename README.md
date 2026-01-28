@@ -70,7 +70,6 @@ for (int i = 0; i < image_width; ++i)
 - 광선 추적의 기본 (반사, 굴절, 산란)
 - 벡터 수학
 - C++ 비동기 프로그래밍 (`std::async`, `std::future`)
-- 작업을 어떻게 쪼개야 race condition 없이 병렬화할 수 있는지
 
 ## 빌드
 
